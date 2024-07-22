@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from PIL import Image
 from io import BytesIO
@@ -7,10 +8,27 @@ import requests
 import base64
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
 app = FastAPI()
+
+# Configurar CORS
+origins = [
+    "http://localhost:5175",  # URL del frontend (ajusta según sea necesario)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Configurar logging
+logging.basicConfig(level=logging.INFO)
 
 # OpenAI API Key
 api_key = os.getenv("OPENAI_API_KEY")
@@ -31,6 +49,7 @@ async def upload_image(file: UploadFile = File(...)):
         colors = extract_colors(image)
         return JSONResponse(content={"colors": colors})
     except Exception as e:
+        logging.error(f"Error processing image: {e}")
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 def extract_colors(image):
@@ -71,6 +90,7 @@ def extract_colors(image):
         colors = colors_text.split("\n")
         return colors
     except (requests.exceptions.RequestException, IndexError, KeyError) as e:
+        logging.error(f"Error processing OpenAI response: {e}")
         raise ValueError(f"Error al procesar la respuesta de OpenAI: {e}")
 
 if __name__ == "__main__":
