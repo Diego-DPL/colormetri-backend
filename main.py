@@ -19,6 +19,7 @@ origins = [
     "http://localhost:5175",  # URL del frontend (ajusta según sea necesario)
     "https://www.colormetri.com",
     "https://colormetri.com",
+
 ]
 
 app.add_middleware(
