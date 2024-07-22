@@ -16,10 +16,9 @@ app = FastAPI()
 
 # Configurar CORS
 origins = [
-    "http://localhost:5175",  # URL del frontend (ajusta según sea necesario)
-    "https://www.colormetri.com",
-    "https://colormetri.com",
-
+    "http://localhost:5173",  # URL del frontend local
+    "https://www.colormetri.com",  # URL del frontend desplegado
+    "https://colormetri.com",  # Sin "www" en caso de que también uses este dominio
 ]
 
 app.add_middleware(
